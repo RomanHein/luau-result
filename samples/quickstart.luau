@@ -72,7 +72,7 @@ print(errResult) -- Err(Fail: Something went wrong)
     Result.
 ]]
 
-local result = Result.ok(5):AndThen(function(value)
+local result = Result.ok(5):AndThen(function(value: number)
     if value > 0 then
         return Result.ok(value * 2)
     end
@@ -85,4 +85,31 @@ print(result) -- Ok(10)
 --[[
     If the Result is err, the handler is skipped and the err Result is propogated
     automatically.
+
+    :OrElse() works in the same way.
 ]]
+
+result:OrElse(function(err: never)
+    error("fatal error")
+end):AndThen(function(value: number)
+    return Result.ok(value * 2)
+end)
+
+print(result) -- Ok(20)
+
+--[[
+    :Inspect() and :InspectErr() are useful for observing a Result without
+    changing it.
+]]
+
+okResult:Inspect(print) -- 5
+errResult:InspectErr(print) -- Fail: Something went wrong
+
+--[[
+    Results can be compared directly with ==
+]]
+
+print(Result.ok(5) == Result.ok(5)) -- true 
+print(Result.ok(5) == Result.ok(10)) -- false 
+print(Result.err("Failed") == Result.err("Failed")) -- true 
+print(Result.ok(5) == Result.err(5)) -- false
