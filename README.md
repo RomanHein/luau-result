@@ -1,44 +1,53 @@
-# What is a Result?
+# Introduction
 
-A Result is an object which wraps around values to represent success or failure.
+A Result wraps a value to exclusively represent success or failure.  
 
-A Result has two variants, either it is an ok Result or an err Result. The variant ultimately decides whether it stores a value or an error.
+# Benefits
 
-Results offer many methods to comfortably and safely manipulate, extract or inspect the stored value or error.
+Larger codebases benefit from Results mainly due to their conciser and compacter way of handling failure-prone code, and encouraging developers to write safer code.
 
-# Why should I use it?
-
-If you find yourself constantly checking for failures or writing deeply nested code, Results can make the control flow more concise and easier to follow.
+The code snippets below demonstrate the advantages Results yield in comparison to a traditional implementation.
 
 ```lua
-local success, user = fetchUser()
+local success, profile = fetchProfile()
 
 if not success then
-    return false, nil
+    success, profile = retryFetchProfile()
+
+    if not success then
+        warn("Failed to retrieve profile:", profile)
+        return
+    end
 end
 
-local success2, profile = fetchProfile(user.id)
+local lastJoinDate = profile.joinLog[#profile.joinLog]
 
-if not success2 then
-    return false, nil
+if lastJoinDate <= cutoffDate then
+    local deleted, err = deleteJoinDate(lastJoinDate)
+
+    if not deleted then
+        warn("Failed to delete join date:", err)
+    end
 end
-
-return true, profile.displayName
 ```
 
 ```lua
-return fetchUser()
-    :Map(function(user)
-        return user.id
-    end)
-    :AndThen(fetchProfile)
+fetchProfile()
+    :OrElse(retryFetchProfile)
     :Map(function(profile)
-        return profile.displayName
+        return profile.joinLog[#profile.joinLog]
     end)
+    :AndThen(function(lastJoinDate)
+        if lastJoinDate <= cutoffDate then
+            return deleteJoinDate(lastJoinDate)
+        end
+
+        return Result.ok()
+    end)
+    :InspectErr(warn)
 ```
+
+Results flatten the control flow, reduce variable clutter, and separate error propagation from the successful data-processing logic.
 
 # Sections
 
-[Tutorial with code samples](samples/tutorial.luau)  
-[Install guide](docs/Installation.md)  
-[API documentation](docs/API.md)
