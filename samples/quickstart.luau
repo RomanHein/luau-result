@@ -1,4 +1,4 @@
-local Result = require("../src/init.luau")
+local Result = require("../source/init.luau")
 
 function someErrorProneFunction()
     return Result.err("Something went wrong!")

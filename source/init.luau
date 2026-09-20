@@ -29,9 +29,11 @@ type ResultClass = {
 export type Result<T, E> = {
 	Map: typeof(
 		--[[
+			Transforms the value of the Result and returns the changes in a new ok
+			Result. If the result is err
+
 			Transforms the value of the Result and returns a new ok Result
-			containing the transformed value. 
-			If the Result is err, it is returned instead.
+			containing the transformed value. If the Result is err, it is returned instead.
 		]]
 		function(result: Result<T, E>, transformer: (value: T) -> any): Result<T, E>
 		end
@@ -304,7 +306,7 @@ end
 
 function Result:__newindex(index, value)
 	if index == "isOk" or index == "isErr" then
-		error("TypeError: assignment to read-only property", 2)
+		error("LogicalError: assignment to read-only property", 2)
 	end
 
 	rawset(self, index, value)

@@ -1,10 +1,10 @@
 # Introduction
 
-A Result wraps a value to exclusively represent success or failure.  
+Wraps a value to exclusively represent success or failure.  
 
 # Benefits
 
-Larger codebases benefit from Results mainly due to their conciser and compacter way of handling failure-prone code, and encouraging developers to write safer code.
+Larger codebases benefit from Results mainly due to their conciser and compacter way of handling failure-prone code, and encouraging developers to write better code.
 
 The code snippets below demonstrate the advantages Results yield in comparison to a traditional implementation.
 
@@ -47,7 +47,8 @@ fetchProfile()
     :InspectErr(warn)
 ```
 
-Results flatten the control flow, reduce variable clutter, and separate error propagation from the successful data-processing logic.
+Results flattened the control flow, reduced variable clutter, and separated error propagation from the successful data-processing logic.
 
 # Sections
 
+[API documentation](docs/API.md)
