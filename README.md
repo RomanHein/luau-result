@@ -1,6 +1,8 @@
 # Introduction
 
-Wraps a value to exclusively represent success or failure.  
+A Result is an object that represents the success or failure of an operation.
+
+It can be imagined as an object that contains a boolean and a value. The boolean indicates whether the value represents the successful result of an operation or an error. This allows operations that are prone to failure to explicitly communicate whether they succeeded, while carrying the corresponding value or error with them.
 
 # Benefits
 

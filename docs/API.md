@@ -11,8 +11,8 @@
 
 ### Methods
 
-Map  
-MapErr  
+[Map](#map)  
+[MapErr](#maperr)  
 AndThen  
 OrElse  
 Match  
