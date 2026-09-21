@@ -13,9 +13,9 @@
 
 [Map](#map)  
 [MapErr](#maperr)  
-AndThen  
-OrElse  
-Match  
+[AndThen](#andthen)  
+[OrElse](#orelse)  
+[Match](#match)  
 Inspect  
 InspectErr  
 Unwrap  
@@ -23,8 +23,8 @@ UnwrapErr
 
 ### Properties
 
-isOk  
-isErr  
+[isOk](#isok)  
+[isErr](#iserr)  
 
 ### Errors
 
@@ -74,7 +74,7 @@ local result = Result.ok(5)
 print(result)
 ```
 
-```lua
+```text
 Ok(5)
 ```
 
@@ -102,80 +102,223 @@ local result = Result.err("Something went wrong!")
 print(result)
 ```
 
-```lua
+```text
 Err(Something went wrong!)
 ```
 
 ## Map
 
-> Transforms the value inside an ok Result and returns the tranformed value in a new ok Result.  
-> Transformation is skipped on err Results and the Result is returned unchanged.
+> Transforms the value of an ok Result into a new ok Result.   
+> Err Results do not get transformed and are returned unchanged.  
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The Result to transform |
+| result | Result<T, E> | The ok Result with the value to transform |
 | transformer | (T) -> U | The function that transforms the value |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<U, E> | The ok Result that contains the transformed value or the original err Result |
+| Result<U, E> | The ok Result with the transformed value or the original err Result |
 
 **Example**
 
 ```lua
 local result = Result.ok(10)
 
-local newResult = result:Map(function(value)
+result = result:Map(function(value)
     return value * 10
 end)
 
 print(result)
-print(newResult)
 ```
 
-```lua
-Ok(10)
+```text
 Ok(100)
 ```
 
 ## MapErr
 
-> Transforms the error inside an err Result and returns the tranformed error in a new err Result.  
-> Transformation is skipped on ok Results and the Result is returned unchanged.
+> Transforms the error of an err Result into a new err Result.   
+> Ok Results do not get transformed and are returned unchanged.  
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The Result to transform |
+| result | Result<T, E> | The err Result with the error to transform |
 | transformer | (E) -> U | The function that transforms the error |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<T, U> | The err Result that contains the transformed error or the original ok Result |
+| Result<T, U> | The err Result with the transformed error or the original ok Result |
 
 **Example**
 
 ```lua
 local result = Result.err("Something went wrong!")
 
-local newResult = result:MapErr(function(err)
+result = result:MapErr(function(err)
     return "CriticalError: "..err
 end)
 
 print(result)
-print(newResult)
 ```
 
-```lua
-Err(Something went wrong!)
+```text
 Err(CriticalError: Something went wrong!)
+```
+
+## AndThen
+
+> Chains a Result-producing function to an ok Result.  
+> Err Results do not invoke the handler and are returned unchanged.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The ok Result to chain onto |
+| handler | (T) -> Result<U, F> | The function that receives the value and returns a Result |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| Result<U, F> | The Result returned by the handler |
+
+**Example**
+
+```lua
+local result = Result.ok(10)
+
+result = result:AndThen(function(value)
+    if value > 5 then
+        return Result.ok(value * 2)
+    end
+
+    return Result.err("Value is too small!")
+end)
+
+print(result)
+```
+
+```text
+Ok(20)
+```
+
+## OrElse
+
+> Chains a Result-producing function to an err Result.  
+> Ok Results do not invoke the handler and are returned unchanged.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The err Result to chain onto |
+| handler | (E) -> Result<U, F> | The function that receives the value and returns a Result |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| Result<U, F> | The Result returned by the handler |
+
+**Example**
+
+```lua
+local result = Result.err("Mock error")
+
+result = result:OrElse(function(err)
+    if err == "Mock error" then
+        return Result.ok("Everything is ok")
+    end
+
+    return Result.err(err)
+end)
+
+print(result)
+```
+
+```text
+Ok(Everything is ok)
+```
+
+## Match
+
+> Invokes a function that is associated with the state of a Result.  
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The Result to match against |
+| handlers | {ok: (T) -> F, err: (E) -> R} | The functions that handle the respective state of the Result |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| F \| R | The value returned by the handler |
+
+**Example**
+
+```lua
+local result = Result.ok(30)
+
+result = result:Match({
+    ok = function(value)
+        return value * 2
+    end,
+
+    err = function(err)
+        return err
+    end,
+})
+
+print(result)
+```
+
+```text
+60
+```
+
+## isOk
+
+> Indicates whether a Result is ok.
+
+**Example**
+
+```lua
+local result = Result.ok(50)
+
+print(result.isOk)
+```
+
+```text
+true
+```
+
+## isErr
+
+> Indicates whether a Result is err.
+
+**Example**
+
+```lua
+local result = Result.err("Error message")
+
+print(result.isErr)
+```
+
+```text
+true
 ```
 
 ## InvalidArgument
@@ -188,7 +331,7 @@ Err(CriticalError: Something went wrong!)
 result:Map(0)
 ```
 
-```lua
+```text
 InvalidArgument: 'transformer' must be a function
 ```
 
@@ -202,6 +345,6 @@ InvalidArgument: 'transformer' must be a function
 okResult:UnwrapErr()
 ```
 
-```lua
+```text
 LogicalError: unwrapping error of ok Result
 ```
