@@ -4,7 +4,7 @@
 
 [Result](#result)
 
-### Constructor
+### Constructors
 
 [ok](#ok)  
 [err](#err)  
@@ -222,13 +222,13 @@ Ok(20)
 | Name | Type | Description |
 | --- | --- | --- |
 | result | Result<T, E> | The err Result to chain onto |
-| handler | (E) -> Result<U, F> | The function that returns a Result |
+| handler | (E) -> Result<T, F> | The function that returns a Result |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<U, F> | The Result returned by the handler |
+| Result<T, F> | The Result returned by the handler |
 
 **Example**
 
@@ -252,7 +252,7 @@ Ok(Everything is ok)
 
 ## Match
 
-> Invokes a function that is associated with the state of a Result.  
+> Invokes the handler that is associated with the Result's variant.
 
 **Parameters**
 
@@ -291,8 +291,8 @@ print(result)
 
 ## Inspect
 
-> Copies the value of an ok Result and invokes a function with it. Returns the Result unchanged.  
-> Err Results do not invoke the function. Tables are passed by reference.
+> Invokes a function with the value of an ok Result. Returns the Result unchanged.  
+> Err Results do not invoke the function.
 
 **Parameters**
 
@@ -321,8 +321,8 @@ Hello world!
 
 ## InspectErr
 
-> Copies the error of an err Result and invokes a function with it. Returns the Result unchanged.  
-> Ok Results do not invoke the function. Tables are passed by reference.
+> Invokes a function with the error of an err Result. Returns the Result unchanged.  
+> Ok Results do not invoke the function.
 
 **Parameters**
 
@@ -342,7 +342,7 @@ Hello world!
 ```lua
 local result = Result.err("Something went wrong")
 
-result:Inspect(warn)
+result:InspectErr(warn)
 ```
 
 ```text
@@ -394,7 +394,7 @@ Apple
 
 | Type | Description |
 | --- | --- |
-| T | The error of the err Result |
+| E | The error of the err Result |
 
 **Example**
 
