@@ -16,10 +16,10 @@
 [AndThen](#andthen)  
 [OrElse](#orelse)  
 [Match](#match)  
-Inspect  
-InspectErr  
-Unwrap  
-UnwrapErr  
+[Inspect](#inspect)  
+[InspectErr](#inspecterr)  
+[Unwrap](#unwrap)  
+[UnwrapErr](#unwraperr)  
 
 ### Properties
 
@@ -184,7 +184,7 @@ Err(CriticalError: Something went wrong!)
 | Name | Type | Description |
 | --- | --- | --- |
 | result | Result<T, E> | The ok Result to chain onto |
-| handler | (T) -> Result<U, F> | The function that receives the value and returns a Result |
+| handler | (T) -> Result<U, F> | The function that returns a Result |
 
 **Returns**
 
@@ -222,7 +222,7 @@ Ok(20)
 | Name | Type | Description |
 | --- | --- | --- |
 | result | Result<T, E> | The err Result to chain onto |
-| handler | (E) -> Result<U, F> | The function that receives the value and returns a Result |
+| handler | (E) -> Result<U, F> | The function that returns a Result |
 
 **Returns**
 
@@ -287,6 +287,126 @@ print(result)
 
 ```text
 60
+```
+
+## Inspect
+
+> Copies the value of an ok Result and invokes a function with it. Returns the Result unchanged.  
+> Err Results do not invoke the function. Tables are passed by reference.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The ok Result to inspect |
+| inspector | (T) -> () | The function to invoke |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| Result<T, E> | The original Result |
+
+**Example**
+
+```lua
+local result = Result.ok("Hello world!")
+
+result:Inspect(print)
+```
+
+```text
+Hello world!
+```
+
+## InspectErr
+
+> Copies the error of an err Result and invokes a function with it. Returns the Result unchanged.  
+> Ok Results do not invoke the function. Tables are passed by reference.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The err Result to inspect |
+| inspector | (E) -> () | The function to invoke |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| Result<T, E> | The original Result |
+
+**Example**
+
+```lua
+local result = Result.err("Something went wrong")
+
+result:Inspect(warn)
+```
+
+```text
+Something went wrong
+```
+
+## Unwrap
+
+> Returns the value of an ok Result.  
+> Unwrapping an err Result throws an error.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The ok Result to unwrap |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| T | The value of the ok Result |
+
+**Example**
+
+```lua
+local result = Result.ok("Apple")
+local value = result:Unwrap()
+
+print(value)
+```
+
+```text
+Apple
+```
+
+## UnwrapErr
+
+> Returns the error of an err Result.  
+> Unwrapping an ok Result throws an error.
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| result | Result<T, E> | The err Result to unwrap |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| T | The error of the err Result |
+
+**Example**
+
+```lua
+local result = Result.err(177)
+local err = result:UnwrapErr()
+
+print(err)
+```
+
+```text
+177
 ```
 
 ## isOk

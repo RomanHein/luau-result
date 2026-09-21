@@ -8,7 +8,7 @@ It can be imagined as an object that contains a boolean and a value. The boolean
 
 Larger codebases benefit from Results mainly due to their conciser and compacter way of handling failure-prone code, and encouraging developers to write better code.
 
-The code snippets below demonstrate the advantages Results yield in comparison to a traditional implementation.
+The code snippets below demonstrate the advantages Results yield in a failure prone environment in comparison to a traditional implementation, both accomplish the same task.
 
 ```lua
 local success, profile = fetchProfile()
@@ -49,8 +49,13 @@ fetchProfile()
     :InspectErr(warn)
 ```
 
-Results flattened the control flow, reduced variable clutter, and separated error propagation from the successful data-processing logic.
+| Category | Without Results | With Results |
+| --- | --- | --- |
+| Lines of code | 15 | 9-12 (depending on chaining style) |
+| Temporary variables | 5 | None |
+| Error handling | Manual check after each call | Centralized in `InspectErr` |
 
 # Sections
 
-[API documentation](docs/API.md)
+[Install guide](docs/installation.md)  
+[API documentation](docs/api.md)  
