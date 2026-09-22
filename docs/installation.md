@@ -1,6 +1,8 @@
 # Step by step guide
 
-1. Create a new module script inside your project.
-2. Download the newest [release]().
-2. Copy the code from `source/init.luau` and paste it into the module script.
-3. Require the module script.
+1. Download the newest [release](https://github.com/RomanHein/luau-result/releases).
+2. Place `init.luau` somewhere in your project.
+3. Require the module:
+```lua
+local Result = require(path.to.result.module)
+```
