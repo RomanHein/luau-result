@@ -11,7 +11,7 @@
 type ResultClass = {
 	ok: typeof(
 		--[[
-			Creates a new ok Result containing the value.
+			Creates an Ok Result that contains a value.
 		]]
 		function<T>(value: T): Result<T, never>
 		end
@@ -19,7 +19,7 @@ type ResultClass = {
 
 	err: typeof(
 		--[[
-			Creates a new err Result containing the error.
+			Creates an Err Result that contains an error.
 		]]
 		function<E>(err: E): Result<never, E>
 		end
@@ -29,11 +29,7 @@ type ResultClass = {
 export type Result<T, E> = {
 	Map: typeof(
 		--[[
-			Transforms the value of the Result and returns the changes in a new ok
-			Result. If the result is err
-
-			Transforms the value of the Result and returns a new ok Result
-			containing the transformed value. If the Result is err, it is returned instead.
+			Transforms the value of an Ok Result into a new Ok Result.
 		]]
 		function(result: Result<T, E>, transformer: (value: T) -> any): Result<T, E>
 		end
@@ -41,9 +37,7 @@ export type Result<T, E> = {
 
 	MapErr: typeof(
 		--[[
-			Transforms the error of the err Result and returns a new err Result
-			containing the transformed error. 
-			If the Result is ok, it is returned instead.
+			Transforms the error of an Err Result into a new Err Result.  
 		]]
 		function(result: Result<T, E>, transformer: (err: E) -> any): Result<T, E>
 		end
@@ -51,9 +45,7 @@ export type Result<T, E> = {
 
 	AndThen: typeof(
 		--[[
-			Passes the value of the ok Result to the handler and returns the Result
-			returned by the handler.
-			If the Result is err, it is returned instead.
+			Chains a Result-producing function to an Ok Result.
 		]]
 		function(result: Result<T, E>, handler: (value: T) -> Result<T, E>): Result<T, E>
 		end
@@ -61,9 +53,7 @@ export type Result<T, E> = {
 
 	OrElse: typeof(
 		--[[
-			Passes the error of the err Result to the handler and returns the Result
-			returned by the handler.
-			If the Result is ok, it is returned instead.
+			Chains a Result-producing function to an err Result.
 		]]
 		function(result: Result<T, E>, handler: (err: E) -> Result<T, E>): Result<T, E>
 		end
@@ -71,8 +61,7 @@ export type Result<T, E> = {
 
 	Match: typeof(
 		--[[
-			Calls the ok handler if the Result is ok, or the err handler if the Result
-			is err, and returns the handler's returned value.
+			Invokes a function that handles the Result's variant.
 		]]
 		function<R, F>(result: Result<T, E>, results: {ok: (value: T) -> R, err: (err: E) -> F}): R | F
 		end
@@ -80,9 +69,7 @@ export type Result<T, E> = {
 
 	Inspect: typeof(
 		--[[
-			Calls the inspector with the value of the ok Result without modifying it and
-			returns the Result. 
-			If the Result is err, the inspector will not be called.
+			Invokes a function with the value of an Ok Result.
 		]]
 		function(result: Result<T, E>, inspector: (value: T) -> ()): Result<T, E>
 		end
@@ -90,9 +77,7 @@ export type Result<T, E> = {
 
 	InspectErr: typeof(
 		--[[
-			Calls the inspector with the error of the err Result without modifying it and
-			returns the Result. 
-			If the Result is ok, the inspector will not be called.
+			Invokes a function with the error of an Err Result.
 		]]
 		function(result: Result<T, E>, inspector: (err: E) -> ()): Result<T, E>
 		end
@@ -100,8 +85,7 @@ export type Result<T, E> = {
 
 	Unwrap: typeof(
 		--[[
-			Returns the value of the ok Result.
-			If the Result is err, an error is thrown.
+			Returns the value of an Ok Result.
 		]]
 		function(result: Result<T, E>): T
 		end
@@ -109,8 +93,7 @@ export type Result<T, E> = {
 
 	UnwrapErr: typeof(
 		--[[
-			Returns the error of the err Result.
-			If the Result is ok, an error is thrown.
+			Returns the error of an Err Result.
 		]]
 		function(result: Result<T, E>): E
 		end
@@ -270,7 +253,7 @@ function Result:Unwrap()
 	end
 
 	if not self._isOk then
-		error("LogicalError: unwrapping value of err Result", 2)
+		error("LogicalError: unwrapping value of Err Result", 2)
 	end
 
 	return self._value
@@ -282,7 +265,7 @@ function Result:UnwrapErr()
 	end
 
 	if self._isOk then
-		error("LogicalError: unwrapping error of ok Result", 2)
+		error("LogicalError: unwrapping error of Ok Result", 2)
 	end
 
 	return self._err

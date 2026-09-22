@@ -1,14 +1,20 @@
 # Introduction
 
-A Result is an object that represents the success or failure of an operation.
+A Result is an object that represents the outcome of an operation. A Result is either `Ok` and contains a value or `Err` and contains an error. Results allow operations to explicitly report whether they succeeded or failed.
 
-It can be imagined as an object that contains a boolean and a value. The boolean indicates whether the value represents the successful result of an operation or an error. This allows operations that are prone to failure to explicitly communicate whether they succeeded, while carrying the corresponding value or error with them.
+```lua
+function divide(x, y)
+    if y == 0 then
+        return Result.err("Cannot divide by 0")
+    end
+
+    return Result.ok(x / y)
+end
+```
 
 # Benefits
 
-Larger codebases benefit from Results mainly due to their conciser and compacter way of handling failure-prone code, and encouraging developers to write better code.
-
-The code snippets below demonstrate the advantages Results yield in a failure prone environment in comparison to a traditional implementation, both accomplish the same task.
+Larger codebases benefit from Results mainly due to their conciser and compacter handling of failures. Another benefit is their ability to scale well with the code and ensuring a flatter control flow.
 
 ```lua
 local success, profile = fetchProfile()
@@ -53,7 +59,7 @@ fetchProfile()
 | --- | --- | --- |
 | Lines of code | 15 | 9-12 (depending on chaining style) |
 | Temporary variables | 5 | None |
-| Error handling | Manual check after each call | Centralized in `InspectErr` |
+| Error handling | Manual check after each call | Propagated through the chain |
 
 # Sections
 

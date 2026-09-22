@@ -1,4 +1,4 @@
-local Result = require("../src/init.luau")
+local Result = require("../source/init.luau")
 
 
 -- 1.
@@ -34,21 +34,18 @@ errResult:Unwrap() -- Throws an error.
 
 -- 3.
 --[[
-    Use .isOk and .isErr to check the Result variant before e.g. attempting to
-    unwrap the Result.
+    Use .isOk and .isErr to check the Result variant.
 ]]
 
 local randomResult = if math.random(1, 2) == 2 then Result.ok("Even") else Result.err("Odd")
 
-randomResult:Unwrap() -- Bad, causes errors due to assuming the Result is always ok.
-
 if randomResult.isOk then
-    randomResult:Unwrap() -- Good, only runs when the Result is ok.
+    randomResult:Unwrap()
 end
 
 -- 4.
 --[[
-    Use :Map() and :MapErr() to transform the value/error inside a Result.
+    Use :Map() and :MapErr() to transform the value/error inside the Result.
 ]]
 
 okResult = okResult:Map(function(value: {number})

@@ -33,7 +33,7 @@
 
 ## Result
 
-> Wraps a value to represent success or failure by being ok or err.
+> Wraps a value to represent success or failure by being Ok or Err.
 
 **Type Parameters**
 
@@ -52,7 +52,7 @@ end
 
 ## ok
 
-> Creates an ok Result that contains a value.
+> Creates an Ok Result that contains a value.
 
 **Parameters**
 
@@ -80,7 +80,7 @@ Ok(5)
 
 ## err
 
-> Creates an err Result that contains an error.
+> Creates an Err Result that contains an error.
 
 **Parameters**
 
@@ -108,21 +108,24 @@ Err(Something went wrong!)
 
 ## Map
 
-> Transforms the value of an ok Result into a new ok Result.   
-> Err Results do not get transformed and are returned unchanged.  
+> Transforms the value of an Ok Result into a new Ok Result.
+
+**Notes**
+
+* Err Results do not get transformed and are returned unchanged.  
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The ok Result with the value to transform |
+| result | Result<T, E> | The Ok Result with the value to transform |
 | transformer | (T) -> U | The function that transforms the value |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<U, E> | The ok Result with the transformed value or the original err Result |
+| Result<U, E> | The Ok Result with the transformed value |
 
 **Example**
 
@@ -142,21 +145,24 @@ Ok(100)
 
 ## MapErr
 
-> Transforms the error of an err Result into a new err Result.   
-> Ok Results do not get transformed and are returned unchanged.  
+> Transforms the error of an Err Result into a new Err Result.  
+
+**Notes**
+
+* Ok Results do not get transformed and are returned unchanged.  
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The err Result with the error to transform |
+| result | Result<T, E> | The Err Result with the error to transform |
 | transformer | (E) -> U | The function that transforms the error |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<T, U> | The err Result with the transformed error or the original ok Result |
+| Result<T, U> | The Err Result with the transformed error |
 
 **Example**
 
@@ -176,21 +182,24 @@ Err(CriticalError: Something went wrong!)
 
 ## AndThen
 
-> Chains a Result-producing function to an ok Result.  
-> Err Results do not invoke the handler and are returned unchanged.
+> Chains a Result-producing function to an Ok Result.  
+
+**Notes**
+
+* Err Results do not invoke the handler and are returned unchanged.
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The ok Result to chain onto |
-| handler | (T) -> Result<U, F> | The function that returns a Result |
+| result | Result<T, E> | The Ok Result to chain onto |
+| handler | (T) -> Result<U, E> | The function that returns a Result |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| Result<U, F> | The Result returned by the handler |
+| Result<U, E> | The Result returned by the handler |
 
 **Example**
 
@@ -214,14 +223,17 @@ Ok(20)
 
 ## OrElse
 
-> Chains a Result-producing function to an err Result.  
-> Ok Results do not invoke the handler and are returned unchanged.
+> Chains a Result-producing function to an Err Result.  
+
+**Notes**
+
+* Ok Results do not invoke the handler and are returned unchanged.
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The err Result to chain onto |
+| result | Result<T, E> | The Err Result to chain onto |
 | handler | (E) -> Result<T, F> | The function that returns a Result |
 
 **Returns**
@@ -252,7 +264,7 @@ Ok(Everything is ok)
 
 ## Match
 
-> Invokes the handler that is associated with the Result's variant.
+> Invokes a function that handles the Result's variant.
 
 **Parameters**
 
@@ -291,14 +303,18 @@ print(result)
 
 ## Inspect
 
-> Invokes a function with the value of an ok Result. Returns the Result unchanged.  
-> Err Results do not invoke the function.
+> Invokes a function with the value of an Ok Result.
+
+**Notes**
+
+* Err Results do not invoke the function.
+* Values that are tables are passed by reference.
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The ok Result to inspect |
+| result | Result<T, E> | The Ok Result to inspect |
 | inspector | (T) -> () | The function to invoke |
 
 **Returns**
@@ -321,14 +337,18 @@ Hello world!
 
 ## InspectErr
 
-> Invokes a function with the error of an err Result. Returns the Result unchanged.  
-> Ok Results do not invoke the function.
+> Invokes a function with the error of an Err Result.
+
+**Notes**
+
+* Ok Results do not invoke the function.
+* Errors that are tables are passed by reference.
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The err Result to inspect |
+| result | Result<T, E> | The Err Result to inspect |
 | inspector | (E) -> () | The function to invoke |
 
 **Returns**
@@ -351,28 +371,30 @@ Something went wrong
 
 ## Unwrap
 
-> Returns the value of an ok Result.  
-> Unwrapping an err Result throws an error.
+> Returns the value of an Ok Result.  
+
+**Notes**
+
+* Unwrapping an Err Result throws an error.
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The ok Result to unwrap |
+| result | Result<T, E> | The Ok Result to unwrap |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| T | The value of the ok Result |
+| T | The value of the Ok Result |
 
 **Example**
 
 ```lua
 local result = Result.ok("Apple")
-local value = result:Unwrap()
 
-print(value)
+print(result:Unwrap())
 ```
 
 ```text
@@ -381,28 +403,30 @@ Apple
 
 ## UnwrapErr
 
-> Returns the error of an err Result.  
-> Unwrapping an ok Result throws an error.
+> Returns the error of an Err Result.  
+
+**Notes**
+
+* Unwrapping an Ok Result throws an error.  
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| result | Result<T, E> | The err Result to unwrap |
+| result | Result<T, E> | The Err Result to unwrap |
 
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| E | The error of the err Result |
+| E | The error of the Err Result |
 
 **Example**
 
 ```lua
 local result = Result.err(177)
-local err = result:UnwrapErr()
 
-print(err)
+print(result:UnwrapErr())
 ```
 
 ```text
@@ -466,5 +490,5 @@ okResult:UnwrapErr()
 ```
 
 ```text
-LogicalError: unwrapping error of ok Result
+LogicalError: unwrapping error of Ok Result
 ```
